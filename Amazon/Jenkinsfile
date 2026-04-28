@@ -1,13 +1,54 @@
-// Added feature 1
-//added feature 2
-//added feature 3
-pipeline{
-  agent any 
-  stages{
-    stage{
-      step{
-        echo "hello roshan sir"
-      }
+//pipeline script
+pipeline {
+    agent any
+
+    stages {
+        stage('Clone Project') {
+            steps {
+                git url: 'https://github.com/raghavendrap749-cpu/Amazon.git', branch: 'main'
+            }
+        }
+
+        stage('Compile') {
+            steps {
+                dir('Amazon') {
+                    sh 'mvn compile'
+                }
+            }
+        }
+
+        stage('Test') {
+            steps {
+                dir('Amazon') {
+                    sh 'mvn test'
+                }
+            }
+        }
+
+        stage('Package') {
+            steps {
+                dir('Amazon') {
+                    sh 'mvn package'
+                }
+            }
+        }
+
+        stage('Clean Install') {
+            steps {
+                dir('Amazon') {
+                    sh 'mvn clean install'
+                }
+            }
+        }
     }
-  }
+
+    post {
+        success {
+            echo '✅ Build completed successfully!'
+        }
+        failure {
+            echo '❌ Build failed. Check logs for details.'
+        }
+    }
 }
+
